@@ -1,22 +1,54 @@
 import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import { millisToMinutesAndSeconds } from "../utils";
 import images from "../assets/Images/images";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import { Ionicons } from "@expo/vector-icons";
+import { Themes } from "../assets/Themes";
 
-const Songs = ({ tracks }) => {
+const Songs = ({ tracks, navigation }) => {
   const renderItem = ({ item }) => (
+    <Pressable
+        onPress={(e) => {
+          e.stopPropagation();
+          navigation.navigate("Song Details", { track: item });
+        }}
+      >
     <View style={styles.song}>
-      <Text style={styles.ind}>{item.id + 1}</Text>
-      <Image
-        source={{ uri: item.imageUrl }}
-        style={{ width: "15%", aspectRatio: 1}}
-      />
-      <View style={{ padding: 5, width: "30%"}}>
-        <Text numberOfLines={1} style={styles.songName}>{item.songTitle}</Text>
-        <Text numberOfLines={1} style={styles.songArtist}>{item.songArtists[0].name}</Text>
-      </View>
-      <Text numberOfLines={1} style={styles.songAlbum}>{item.albumName}</Text>
-      <Text style={{ color: "white", width: "10%", padding:1 }}>{millisToMinutesAndSeconds(item.duration)}</Text>
+      
+        <Pressable
+          style={styles.play}
+          onPress={(e) => {
+            e.stopPropagation();
+            navigation.navigate("Song Preview", { track: item });
+          }}
+        >
+          <Ionicons
+            name="md-play-circle"
+            size={24}
+            color={Themes.colors.spotify}
+          />
+        </Pressable>
+        <Image
+          source={{ uri: item.imageUrl }}
+          style={{ width: "15%", aspectRatio: 1 }}
+        />
+        <View style={{ padding: 5, width: "30%" }}>
+          <Text numberOfLines={1} style={styles.songName}>
+            {item.songTitle}
+          </Text>
+          <Text numberOfLines={1} style={styles.songArtist}>
+            {item.songArtists[0].name}
+          </Text>
+        </View>
+        <Text numberOfLines={1} style={styles.songAlbum}>
+          {item.albumName}
+        </Text>
+        <Text style={{ color: "white", width: "10%", padding: 1 }}>
+          {millisToMinutesAndSeconds(item.duration)}
+        </Text>
+      
     </View>
+    </Pressable>
   );
 
   return (
@@ -55,11 +87,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
   },
-  ind: {
+  play: {
     color: "white",
     width: "10%",
     padding: 5,
-    justifyContent : "center",
+    justifyContent: "center",
     alignItems: "center",
   },
   songName: {
